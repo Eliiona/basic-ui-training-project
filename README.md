@@ -19,11 +19,10 @@ The project supports local image files from static resources.
 - Add custom animal photos to `src/main/resources/static/images/animals/`
 - Store only the filename in the animal field, for example `Luna.jpeg`
 - The app resolves that value to `/images/animals/Luna.jpeg`
+- A full `http://` or `https://` image URL is also accepted and used as-is (see the seeded Rabbit/Pepper entry for a working example).
 
 If image filename/url is missing, a fallback is selected by animal type:
 
 - CAT -> `/images/fallback/fallback-cat.jpg`
 - DOG -> `/images/fallback/fallback-dog.jpg`
 - OTHER -> `/images/fallback/fallback-other.jpg`
-
-Place fallback files in `src/main/resources/static/images/fallback/`.

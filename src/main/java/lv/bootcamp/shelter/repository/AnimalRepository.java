@@ -27,23 +27,23 @@ public class AnimalRepository {
     public AnimalRepository() {
         seed("Luna",   AnimalType.CAT,   "Bengal", 2,
                 "Calm and affectionate. Loves cuddles.",
-                "Luna.jpeg",
+                "/images/animals/Luna.jpeg",
                 AnimalStatus.AVAILABLE);
         seed("Diora",    AnimalType.DOG,   "Cane Corso",          4,
                 "Energetic and friendly. Great with kids.",
-                "Diora.jpeg",
+                "/images/animals/Diora.jpeg",
                 AnimalStatus.AVAILABLE);
         seed("Brita",  AnimalType.DOG,   "German Sheppard",            1,
                 "Playful and intelligent. Already trained.",
-                "Brita.png",
+                "/images/animals/Brita.png",
                 AnimalStatus.ADOPTED);
         seed("Dorian", AnimalType.CAT,   "Grey Longhair",      5,
                 "Independent but friendly. Indoor only.",
-                "Dorians.jpeg",
+                "/images/animals/Dorians.jpeg",
                 AnimalStatus.AVAILABLE);
-        seed("Dorian", AnimalType.CAT,   "Tortoiseshell  Shorthair",      4,
+        seed("Murka", AnimalType.CAT,   "Tortoiseshell  Shorthair",      4,
                 "Curious and active. Needs a yard.",
-                "Murka.jpg",
+                "/images/animals/Murka.jpg",
                 AnimalStatus.AVAILABLE);
         seed("Pepper", AnimalType.OTHER, "Rabbit",            2,
                 "Gentle and curious. Loves fresh vegetables.",
