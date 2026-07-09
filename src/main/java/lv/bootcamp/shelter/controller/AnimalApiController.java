@@ -29,6 +29,7 @@ import java.util.List;
 public class AnimalApiController {
 
     private final AnimalService animalService;
+    private final Authentication authentication;
 
     @GetMapping
     @Operation(
@@ -108,6 +109,7 @@ public class AnimalApiController {
             responseCode = "404",
             description = "Animal not found")
     public ResponseEntity<AnimalResponse> adopt(@Parameter(description = "ID of the animal") @PathVariable Long id, Authentication authentication) {
+
         return animalService.adopt(id, authentication.getName())
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());

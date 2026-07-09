@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<!--
+  ╔══════════════════════════════════════════════════════════════════╗
+  ║  TASK A — ADD THYMELEAF                                          ║
+  ╠══════════════════════════════════════════════════════════════════╣
+  ║  This is a plain static HTML file — the animal list is           ║
+  ║  hard-coded and the form does not work yet.                      ║
+  ║                                                                  ║
+  ║  Your job:          ║         ║                ║    ║                          ║
+  ║                                                                  ║
+  ║  ROLE-BASED UI (adoption feature — see SecurityConfig):          ║
+  ║                                                                          ║
+  ║ 10. When isAdmin is true and the animal is ADOPTED, display its  ║
+  ║     adoptionNote (already computed server-side in                ║
+  ║     AnimalResponse) next to the status — everyone else just      ║
+  ║     sees the bare "ADOPTED" status.                              ║
+  ╚══════════════════════════════════════════════════════════════════╝
+-->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shelter Animals</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            max-width: 860px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        h1 {
+            border-bottom: 2px solid #333;
+            padding-bottom: 0.4rem;
+        }
+
+        h2 {
+            margin-top: 2rem;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+
+        li img {
+            width: 120px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+        .info {
+            flex: 1;
+        }
+
+        .status-available {
+            color: green;
+            font-weight: bold;
+        }
+
+        .status-adopted {
+            color: #999;
+            font-weight: bold;
+        }
+
+        form {
+            display: grid;
+            gap: 0.5rem;
+            max-width: 480px;
+            margin-top: 1rem;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input, select, textarea {
+            padding: 0.4rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        button {
+            padding: 0.6rem 1.2rem;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: fit-content;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+    </style>
+</head>
+<body>
+<!-- Navigation -->
+<nav>
+    <a th:href="@{/}">Home</a>
+    <a th:href="@{/animals}">All animals</a>
+    <a th:if="${isAdmin}" th:href="@{/animals/new}">Add animal</a>
+</nav>
+<main>
+    <h1>Shelter Animals</h1>
+    <section aria-label="Animal list">
+        <ul>
+            <li th:each="animal : ${animals}">
+                <img th:src="${animal.imageUrl}"
+                     th:alt="${animal.name}"
+                     width="300"
+                     height="200"
+                     style="object-fit: cover;">
+                <div class="info">
+                    <strong th:text="${animal.name}">Luna</strong>
+                    — <span th:text="${animal.type}">CAT</span> |
+                    <span th:text="${animal.breed}">British Shorthair</span> |
+                    Age: <span th:text="${animal.age}">2</span>
+
+                    <span th:classappend="${animal.status.name() == 'AVAILABLE' ? 'status-available' : 'status-adopted'}"
+                            th:text="${animal.status}"></span>
+
+                    <span th:if="${isAdmin and animal.status.name() == 'ADOPTED' and animal.adoptionNote != null}"
+                            th:text="${' (' + animal.adoptionNote + ')'}"></span>
+
+
+                    <form th:if="${isUser and animal.status.name() == 'AVAILABLE'}"
+                            th:action="@{'/api/animals/' + ${animal.id} + '/adopt'}"
+                            method="post">
+                        <button type="submit">Adopt</button>
+                    </form>
+                </div>
+            </li>
+        </ul>
+    </section>
+
+    <section aria-label="Add new animal" th:if="${isAdmin}">
+        <h2>Add a new animal</h2>
+        <form th:action="@{/animals}" th:object="${animalForm}" method="post">
+
+            <label for="name">Name</label>
+            <input id="name" th:field="*{name}" th:if="${#fields.hasErrors('name')}" th:errors="*{name}" type="text"
+                   required placeholder="e.g. Milo">
+
+            <label for="type">Type</label>
+            <select id="type" th:field="*{type}" th:if="${#fields.hasErrors('type')}" th:errors="*{type}">
+                <option value="">— choose —</option>
+                <option value="CAT">Cat</option>
+                <option value="DOG">Dog</option>
+                <option value="OTHER">Other</option>
+            </select>
+
+            <label for="breed">Breed</label>
+            <input id="breed" th:field="*{breed}" th:if="${#fields.hasErrors('breed')}" th:errors="*{breed}" type="text"
+                   placeholder="e.g. Siamese">
+
+            <label for="age">Age (years)</label>
+            <input id="age" th:field="*{age}" th:if="${#fields.hasErrors('age')}" th:errors="*{age}" type="number"
+                   min="0" placeholder="e.g. 3">
+
+            <label for="description">Description</label>
+            <textarea id="description" th:field="*{description}" th:if="${#fields.hasErrors('description')}"
+                      th:errors="*{description}" rows="3"
+                      placeholder="A short description of the animal's personality"></textarea>
+
+            <label for="imageUrl">Image filename</label>
+            <input id="imageUrl" th:field="*{imageUrl}" th:if="${#fields.hasErrors('imageUrl')}" th:errors="*{imageUrl}"
+                   type="text"
+                   placeholder="luna.jpg">
+
+            <button type="submit">Add animal</button>
+        </form>
+    </section>
+</main>
+</body>
+</html>
